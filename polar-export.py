@@ -4,8 +4,16 @@ import re
 import time
 import sys
 import os
+import json
 
 FLOW_URL = "https://flow.polar.com"
+
+
+with open("config.json") as json_data_file:
+    cfg = json.load(json_data_file)
+print(data)
+
+
 
 def login(driver, username, password):
     driver.get("%s/login" % FLOW_URL)
@@ -52,12 +60,11 @@ def run(driver, username, password, month, year, output_dir):
         export_exercise(driver, ex_id, output_dir)
 
 if __name__ == "__main__":
-    try:
-        (username, password, month, year, output_dir) = sys.argv[1:]
-    except ValueError:
-        sys.stderr.write(("Usage: %s <username> <password> <month> <year> <output_dir>\n") % sys.argv[0])
-        sys.exit(1)
-
+    username = cfg["username"]
+    password = cfg["password"]
+    month = cfg["month"]
+    year = cfg["year"]
+    output_dir = cfg["outputdir"]
     driver = webdriver.Chrome()
     try:
         run(driver, username, password, month, year, output_dir)

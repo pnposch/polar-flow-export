@@ -1,2 +1,5 @@
 /env
 /exports
+/data
+config.json
+*-json

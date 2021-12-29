@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+     context: .
+     dockerfile: Dockerfile
+    volumes:
+      - ./data/:/polar-flow-export/data
+      - ./config.json:/polar-flow-export/config.json
+
