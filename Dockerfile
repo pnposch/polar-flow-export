@@ -4,12 +4,13 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.14/main" >> /etc/apk/repositorie
 
 # install chromedriver
 RUN apk update 
-RUN apk add chromium chromium-chromedriver git libffi-dev python3-dev gcc build-base
+RUN apk add chromium chromium-chromedriver  libffi-dev build-base #bash 
 ENV TZ=Europe/Berlin
 
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN pip install --upgrade pip
+
+
 WORKDIR /polar-flow-export
 ADD polar-export.py polar-export.py
 

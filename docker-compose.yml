@@ -6,6 +6,7 @@ services:
      context: .
      dockerfile: Dockerfile
     volumes:
-      - ./data/:/polar-flow-export/data
+      - ../data/:/data
       - ./config.json:/polar-flow-export/config.json
+ #     - ./polar-export.py:/polar-flow-export/polar-export.py # Testing with local version
 
