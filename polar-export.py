@@ -1,17 +1,24 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import requests
 import re
 import time
 import sys
 import os
 import json
+import chromedriver_binary  # Adds chromedriver binary to path
 
 FLOW_URL = "https://flow.polar.com"
 
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument("--disable-gpu")
+
+regex = r"filename=\"([\w._-]+)\""
 
 with open("config.json") as json_data_file:
     cfg = json.load(json_data_file)
-print(data)
 
 
 
@@ -39,34 +46,30 @@ def export_exercise(driver, exercise_id, output_dir):
     s = requests.Session()
     _load_cookies(s, driver.get_cookies())
 
-    def _get_filename(r):
-        regex = r"filename=\"([\w._-]+)\""
-        return re.search(regex, r.headers['Content-Disposition']).group(1)
-
     r = s.get("%s/api/export/training/tcx/%s" % (FLOW_URL, exercise_id))
-    tcx_data = r.text
-    filename = _get_filename(r)
-
-    outfile = open(os.path.join(output_dir, filename), 'wb')
-    outfile.write(tcx_data)
-    outfile.close()
+    filename = re.search(regex, r.headers['Content-Disposition']).group(1)
+    if os.path.exists(os.path.join(output_dir, filename)):
+        print("File existed. redownloading %s" % filename)
+        
+    with open(os.path.join(output_dir, filename), 'w') as outfile:
+     outfile.write(r.text)
     print("Wrote file %s" % filename)
 
-def run(driver, username, password, month, year, output_dir):
-    login(driver, username, password)
-    time.sleep(5)
-    exercise_ids = get_exercise_ids(driver, year, month)
-    for ex_id in exercise_ids:
-        export_exercise(driver, ex_id, output_dir)
 
 if __name__ == "__main__":
     username = cfg["username"]
     password = cfg["password"]
-    month = cfg["month"]
+    month = 12
     year = cfg["year"]
-    output_dir = cfg["outputdir"]
-    driver = webdriver.Chrome()
+    output_dir = cfg["output_dir"]
+    driver = webdriver.Chrome(options=chrome_options)
+    print("Chrome initialized")
     try:
-        run(driver, username, password, month, year, output_dir)
+        login(driver, username, password)
+        time.sleep(5)
+        exercise_ids = get_exercise_ids(driver, year, month)
+        for ex_id in exercise_ids:
+            export_exercise(driver, ex_id, output_dir)
     finally:
         driver.quit()
+        print("Finished with %s / %s" % (month, year) )
