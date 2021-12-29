@@ -6,21 +6,15 @@ A tool for exporting training sessions from [Polar Flow](https://flow.polar.com)
 ## Installation
 
 ```bash
-$ git clone git@github.com:asib/polar-flow-export.git
-$ cd polar-flow-export
-$ python -m virtualenv env
-$ . env/bin/activate
-(env)$ pip install -r requirements.txt
+$ git clone https://github.com/pnposch/polar-flow-export.git
+$ docker-compose up -d
 ```
-
-You also need to download ChromeDriver if you don't have it already from
-https://chromedriver.chromium.org/downloads and put it somewhere in your `PATH`.
 
 
 ## Usage
 
 ```bash
-(env)$ python polar-export.py <username> <password> <month> <year> <output_dir>
+docker exec -it polar-flow-export python3 polar-flow-export.py
 ```
 
 The tool will save sessions into the output directory, using the default filename
